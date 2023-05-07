@@ -224,7 +224,7 @@ class Problem { //defining the problem space
                 for(int j = 0; j < state.size(); j++){
                     for(int row = 0; row < state.size(); row++){
                         for(int col = 0; col < state.size(); col++ ){
-                            if(state.at(i).at(j) == goalState.at(i).at(j)){
+                            if(state.at(i).at(j) != goalState.at(i).at(j)){
                                 tempCount += pow((i-row), 2);
                                 tempCount += pow((j-col), 2);
                             }}}}}
