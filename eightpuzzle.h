@@ -61,8 +61,6 @@ class puzzle{
     void middlemiddle(tile*curr);
     void HeuristicCal(vector<vector<char>> eightpuz);//calculates the heuristics
     bool validPuzzle(tile* curr); //checks puzzle if puzzle has value of 1-8
-    bool completePuzzle(vector<vector<char>> eightpuz);// checks if the puzzle is solved
-    
 };
 
 

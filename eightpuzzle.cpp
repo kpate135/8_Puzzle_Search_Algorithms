@@ -94,10 +94,6 @@ void puzzle::algorithmChoice(int x){
         cout << "No puzzle" << endl;
         return;
     }
-    if(!validPuzzle(root)){
-        cout << "Puzzle is not valid" << endl;
-        return;
-    }
     choice = x;
     cout << "Choose your algorithm: 1 is for Uniform Cost Search, 2 is for Misplaced Tile Heuristic and 3 is for Euclidean distance heuristic"<< endl;
     if(choice == 1){
@@ -107,7 +103,7 @@ void puzzle::algorithmChoice(int x){
         MisplacedTileH();
     }
     else if(choice ==3){
-        EuclideanDistH();
+         EuclideanDistH();
     }
     else{
         cout <<"Please choose an answer of 1 2 or 3" << endl;
@@ -123,26 +119,6 @@ void puzzle::MisplacedTileH(){
 
 }
 void puzzle::EuclideanDistH(){
-
-}
-
-bool puzzle::completePuzzle(vector<vector<char>> eightpuz){
-    vector<vector<char>> rightPuzzle;
-    const char arr1[] =  {'1', '2', '3'};
-    const char arr2[] =  {'4', '5', '6'};
-    const char arr3[] =  {'7', '8', '*'};
-    vector<char> v1 (arr1, arr1 + sizeof(arr1)/sizeof(arr1[0]));
-    vector<char> v2 (arr2, arr2 + sizeof(arr2)/sizeof(arr2[0]));
-    vector<char> v3 (arr3, arr3 + sizeof(arr3)/sizeof(arr3[0]));
-    rightPuzzle.push_back(v1);
-    rightPuzzle.push_back(v2);
-    rightPuzzle.push_back(v3);
-    if(eightpuz == rightPuzzle){
-        return true;
-    }
-    else{
-        return false;
-    }
 
 }
 
