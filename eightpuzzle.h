@@ -7,8 +7,13 @@
 #include <string>
 #include <queue>
 #include <list>
+#include "problem.cpp"
 
 using namespace std;
+//Initial Plan was to use Vector Arrays to go through and solve the system. 
+//Now nodes might be a lot easier to go through and confirm if it is working. 
+
+class Problem; 
 
 struct tile{
     tile* child1;
@@ -16,7 +21,7 @@ struct tile{
     tile* child3;
     tile* child4;
     tile* parent;
-    vector<vector<char>> eightpuz;
+    vector<vector<int>> eightpuz;
     int heuristic;
     int moveCost;
 };
@@ -36,7 +41,7 @@ class puzzle{
     tile* root;
     int choice; //algorithm choice
     int totalNodesEx;
-    vector<vector<vector<char>>> list;
+    vector<vector<vector<int>>> list;
     priority_queue<tile*, vector<tile*>, Tile_Compare > q; 
     bool goalstate;
 
@@ -47,16 +52,19 @@ class puzzle{
     void makePuzzle(int x);//makes puzzle default puzzle or input own puzzle
     void algorithmChoice(int x); //chooses algorithm's of UCS A* with misplaced tile and A* with euclidean dist
     void printPuzzle(tile* curr); //prints puzzle
-    void UniformCostSearch();
+    void UniCostSearch();
     void MisplacedTileH();
     void EuclideanDistH();
-    void child1(tile*curr, vector<vector<char>> tempv);
-    void child2(tile*curr, vector<vector<char>> tempv);
-    void child3(tile*curr, vector<vector<char>> tempv);
-    void child4(tile*curr, vector<vector<char>> tempv);
-    int HeuristicCalU(vector<vector<char>> eightpuz);//calculates the heuristic for A* Misplaced Tile
-    int HeuristicCalM(vector<vector<char>> eightpuz);//calculates the heuristic for A* Misplaced Tile
-    int HeuristicCalE(vector<vector<char>> eightpuz);//calculates the heuristic for A* Misplaced Tile
+    void topleft(tile*curr);
+    void topmiddle(tile*curr);
+    void topright(tile*curr);
+    void bottomleft(tile*curr);
+    void bottomright(tile*curr);
+    void bottommiddle(tile*curr);
+    void middleleft(tile*curr);
+    void middleright(tile*curr);
+    void middlemiddle(tile*curr);
+    void HeuristicCal(vector<vector<char>> eightpuz);//calculates the heuristics
     bool validPuzzle(tile* curr); //checks puzzle if puzzle has value of 1-8
     bool completePuzzle(vector<vector<char>> eightpuz);// checks if the puzzle is solved
     
