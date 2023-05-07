@@ -54,7 +54,9 @@ class puzzle{
     void child2(tile*curr, vector<vector<char>> tempv);
     void child3(tile*curr, vector<vector<char>> tempv);
     void child4(tile*curr, vector<vector<char>> tempv);
-    int HeuristicCal(vector<vector<char>> eightpuz);//calculates the heuristics
+    int HeuristicCalU(vector<vector<char>> eightpuz);//calculates the heuristic for A* Misplaced Tile
+    int HeuristicCalM(vector<vector<char>> eightpuz);//calculates the heuristic for A* Misplaced Tile
+    int HeuristicCalE(vector<vector<char>> eightpuz);//calculates the heuristic for A* Misplaced Tile
     bool validPuzzle(tile* curr); //checks puzzle if puzzle has value of 1-8
     bool completePuzzle(vector<vector<char>> eightpuz);// checks if the puzzle is solved
     

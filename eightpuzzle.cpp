@@ -116,6 +116,16 @@ void puzzle::algorithmChoice(int x){
 
 }
 
+void puzzle::UniformCostSearch(){
+
+}
+void puzzle::MisplacedTileH(){
+
+}
+void puzzle::EuclideanDistH(){
+
+}
+
 
 
 bool puzzle::completePuzzle(vector<vector<char>> eightpuz){
@@ -138,7 +148,30 @@ bool puzzle::completePuzzle(vector<vector<char>> eightpuz){
 
 }
 
-int puzzle::HeuristicCal(vector<vector<char>> eightpuz){
+int puzzle::HeuristicCalM(vector<vector<char>> eightpuz){
+    int tempH = 0;
+    vector<vector<char>> rightPuzzle;
+    const char a1[] = {'1', '2', '3'};
+    const char a2[] = {'4', '5', '6'};
+    const char a3[] = {'7', '8', '*'};
+    vector<char> v1 (a1, a1 + sizeof(a1) / sizeof(a1[0]));
+	vector<char> v2 (a2, a2 + sizeof(a2) / sizeof(a2[0]));
+	vector<char> v3 (a3, a3 + sizeof(a3) / sizeof(a3[0]));
+    rightPuzzle.push_back(v1);
+    rightPuzzle.push_back(v2);
+    rightPuzzle.push_back(v3);
+    if(choice == 2){ //A* with misplaced tile heuristic
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(eightpuz.at(i).at(j) != rightPuzzle.at(i).at(j)){
+                    tempH++;
+                }
+            }
+        }
+        return tempH;
+    }
+}
+int puzzle::HeuristicCalU(vector<vector<char>> eightpuz){
     int tempH = 0;
     vector<vector<char>> rightPuzzle;
     const char a1[] = {'1', '2', '3'};
@@ -153,19 +186,22 @@ int puzzle::HeuristicCal(vector<vector<char>> eightpuz){
     if(choice == 1){ // uniform cost search heuristic
         return tempH;
     }
-    else if(choice == 2){ //A* with misplaced tile heuristic
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                if(eightpuz.at(i).at(j) != rightPuzzle.at(i).at(j)){
-                    tempH++;
-                }
-            }
-        }
-        return tempH;
-    }
-    else if(choice == 3){ //A* with Euclidean distance heuristic
-    }
+}
 
+int puzzle::HeuristicCalE(vector<vector<char>> eightpuz){
+    int tempH = 0;
+    vector<vector<char>> rightPuzzle;
+    const char a1[] = {'1', '2', '3'};
+    const char a2[] = {'4', '5', '6'};
+    const char a3[] = {'7', '8', '*'};
+    vector<char> v1 (a1, a1 + sizeof(a1) / sizeof(a1[0]));
+	vector<char> v2 (a2, a2 + sizeof(a2) / sizeof(a2[0]));
+	vector<char> v3 (a3, a3 + sizeof(a3) / sizeof(a3[0]));
+    rightPuzzle.push_back(v1);
+    rightPuzzle.push_back(v2);
+    rightPuzzle.push_back(v3);
+    if(choice == 3){ // A* with Euclidean Heuristic 
+    }
 }
 
 void puzzle::printPuzzle(tile* curr){
