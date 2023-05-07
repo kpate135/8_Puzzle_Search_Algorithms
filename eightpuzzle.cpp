@@ -94,6 +94,10 @@ void puzzle::algorithmChoice(int x){
         cout << "No puzzle" << endl;
         return;
     }
+    if(!validPuzzle(root)){
+        cout << "Puzzle is not valid" << endl;
+        return;
+    }
     choice = x;
     cout << "Choose your algorithm: 1 is for Uniform Cost Search, 2 is for Misplaced Tile Heuristic and 3 is for Euclidean distance heuristic"<< endl;
     if(choice == 1){
@@ -103,7 +107,7 @@ void puzzle::algorithmChoice(int x){
         MisplacedTileH();
     }
     else if(choice ==3){
-         EuclideanDistH();
+        EuclideanDistH();
     }
     else{
         cout <<"Please choose an answer of 1 2 or 3" << endl;
@@ -112,13 +116,55 @@ void puzzle::algorithmChoice(int x){
 
 }
 
-void puzzle::UniformCostSearch(){
+
+
+bool puzzle::completePuzzle(vector<vector<char>> eightpuz){
+    vector<vector<char>> rightPuzzle;
+    const char arr1[] =  {'1', '2', '3'};
+    const char arr2[] =  {'4', '5', '6'};
+    const char arr3[] =  {'7', '8', '*'};
+    vector<char> v1 (arr1, arr1 + sizeof(arr1)/sizeof(arr1[0]));
+    vector<char> v2 (arr2, arr2 + sizeof(arr2)/sizeof(arr2[0]));
+    vector<char> v3 (arr3, arr3 + sizeof(arr3)/sizeof(arr3[0]));
+    rightPuzzle.push_back(v1);
+    rightPuzzle.push_back(v2);
+    rightPuzzle.push_back(v3);
+    if(eightpuz == rightPuzzle){
+        return true;
+    }
+    else{
+        return false;
+    }
 
 }
-void puzzle::MisplacedTileH(){
 
-}
-void puzzle::EuclideanDistH(){
+int puzzle::HeuristicCal(vector<vector<char>> eightpuz){
+    int tempH = 0;
+    vector<vector<char>> rightPuzzle;
+    const char a1[] = {'1', '2', '3'};
+    const char a2[] = {'4', '5', '6'};
+    const char a3[] = {'7', '8', '*'};
+    vector<char> v1 (a1, a1 + sizeof(a1) / sizeof(a1[0]));
+	vector<char> v2 (a2, a2 + sizeof(a2) / sizeof(a2[0]));
+	vector<char> v3 (a3, a3 + sizeof(a3) / sizeof(a3[0]));
+    rightPuzzle.push_back(v1);
+    rightPuzzle.push_back(v2);
+    rightPuzzle.push_back(v3);
+    if(choice == 1){ // uniform cost search heuristic
+        return tempH;
+    }
+    else if(choice == 2){ //A* with misplaced tile heuristic
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(eightpuz.at(i).at(j) != rightPuzzle.at(i).at(j)){
+                    tempH++;
+                }
+            }
+        }
+        return tempH;
+    }
+    else if(choice == 3){ //A* with Euclidean distance heuristic
+    }
 
 }
 

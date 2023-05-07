@@ -50,17 +50,14 @@ class puzzle{
     void UniformCostSearch();
     void MisplacedTileH();
     void EuclideanDistH();
-    void topleft(tile*curr);
-    void topmiddle(tile*curr);
-    void topright(tile*curr);
-    void bottomleft(tile*curr);
-    void bottomright(tile*curr);
-    void bottommiddle(tile*curr);
-    void middleleft(tile*curr);
-    void middleright(tile*curr);
-    void middlemiddle(tile*curr);
-    void HeuristicCal(vector<vector<char>> eightpuz);//calculates the heuristics
+    void child1(tile*curr, vector<vector<char>> tempv);
+    void child2(tile*curr, vector<vector<char>> tempv);
+    void child3(tile*curr, vector<vector<char>> tempv);
+    void child4(tile*curr, vector<vector<char>> tempv);
+    int HeuristicCal(vector<vector<char>> eightpuz);//calculates the heuristics
     bool validPuzzle(tile* curr); //checks puzzle if puzzle has value of 1-8
+    bool completePuzzle(vector<vector<char>> eightpuz);// checks if the puzzle is solved
+    
 };
 
 
