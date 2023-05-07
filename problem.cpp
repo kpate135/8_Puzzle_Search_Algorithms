@@ -113,7 +113,7 @@ class Node {
 
         int fn; // f(n) = g(n) + h(n)
 
-        int efn; // the eculdiean f(n) = g(n) + sqrt(h(n))
+        int efn; // the eculdiean f(n) = g(n) + sqrt(h(n)
 
 };
 
@@ -121,8 +121,11 @@ class Problem { //defining the problem space
     private:
         vector<vector<int>> initial_state;
         vector<vector<int>> goal_state;
+
         int h;
+
     public:
+        Problem() = default;
         Problem(vector<vector<int>> _initial_state, vector<vector<int>> _goal_state) {
             initial_state = _initial_state;
             goal_state = _goal_state;
@@ -182,20 +185,31 @@ class Problem { //defining the problem space
                     break;
 
             }
-
             int tempCount = 0;
+            if(MH){
             for(int i = 0; i < 3; i++){
                 for(int j = 0; j< 3; j++){
                     if(nodeState.at(i).at(j) != goal_state.at(i).at(j)){
                         tempCount++;
                     }}}
+            }
+            else if(EH){
+                for(int i = 0; i < nodeState.size(); i++){
+                for(int j = 0; j < nodeState.size(); j++){
+                    for(int row = 0; row < nodeState.size(); row++){
+                        for(int col = 0; col < nodeState.size(); col++ ){
+                            if(nodeState.at(i).at(j) == goal_state.at(i).at(j)){
+                                tempCount += pow((i-row), 2);
+                                tempCount += pow((j-col), 2);
+                            }}}}}
+            }
             childNode->set_state(childState);
             childNode->set_cost(node->get_cost() + 1);
             childNode->set_parent(node);
             childNode->set_operator(op);
             childNode->set_hn(node->get_heuristic());
             childNode->set_fn(node->get_cost() + 1 + node->get_heuristic() + tempCount);
-            //childNode->set_efn(node->get_cost() + node->get_heuristic());
+            childNode->set_efn(node->get_cost()+ 1 + node->get_heuristic() + sqrt(tempCount));
             return childNode;
         }
 
@@ -342,6 +356,9 @@ class Problem { //defining the problem space
             }
         }
         */
+        bool MH;
+
+        bool EH;
 };
 
 
@@ -405,7 +422,9 @@ vector<Operator> AStarMisH(const Problem& problem){
      while (!frontier.empty()) {
         Node* currNode = frontier.top().second; //choose the lowest-cost node in frontier to explore
         frontier.pop();
-
+        Problem p;
+        p.MH = true;
+        p.EH = false;
         //check if the state is the goal state
         vector<vector<int>> currState = currNode->get_state();
         if (currState == problem.get_goal_state()) {
@@ -446,9 +465,13 @@ vector<Operator> AStarEucH(const Problem& problem){
 
     unordered_set<string> explored;
 
+     frontier.push({0, initial_node});
      while (!frontier.empty()) {
         Node* currNode = frontier.top().second; //choose the lowest-cost node in frontier to explore
         frontier.pop();
+        Problem p;
+        p.MH = false;
+        p.EH = true;
 
         //check if the state is the goal state
         vector<vector<int>> currState = currNode->get_state();
