@@ -4,4 +4,4 @@ Contributed by Christian Lo (clo060), Ethan liu (eliu058), Calvin Trujillo (ctru
 We used the Uniform Cost Search, A* algorithm with Misplaced Tile Heuristic, and A* algorithm with Euclidean Distance to solve the 8 Puzzle.
 
 ## Instructions to Compile
-To run the project type "g++ main.cpp2" into the terminal and compile the code by typing "./a.exe"
+To run the project type "g++ main2.cpp" into the terminal and compile the code by typing "./a.exe"
