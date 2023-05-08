@@ -53,6 +53,7 @@ void algorithmChoice(int x){
     cout << "\t0 - Uniform Cost Search" << endl;
     cout << "\t1 - A* with the Misplaced Tile Heuristic" << endl;
     cout << "\t2 - A* with the Euclidean Distance Heuristic" << endl;
+    cout << "Choice: ";
     cin >> x;
     if(x == 0){
         cout << "Thank you for choosing: A* with the Misplaced Tile Heuristic" << endl;
