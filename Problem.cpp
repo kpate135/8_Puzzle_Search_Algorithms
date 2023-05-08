@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -16,10 +17,19 @@ enum class Operator {
   NONE
 };
 
+enum class SearchType {
+    Uniform = 0,
+    Misplaced,
+    Euclidean
+};
+
 class Node {
     public:
-        Node(const vector<vector<int>>& _state, int _cost, Node* _parent, Operator _op) :
-            state(_state), cost(_cost), parent(_parent), op(_op) {}
+        Node(const vector<vector<int>>& _state, int _g_n, int _h_n, Node* _parent, Operator _op) : 
+            state(_state), g_n(_g_n), h_n(_h_n), parent(_parent), op(_op) 
+            {
+                this->cost = g_n + h_n;
+            } //updated constructor for g(n) and h(n) values 
 
         vector<vector<int>> get_state() const {
             return state;
@@ -27,6 +37,22 @@ class Node {
 
         void set_state(vector<vector<int>>& _state) {
             this->state = _state;
+        }
+
+        int get_g_n() const {
+            return g_n;
+        }
+
+        void set_g_n(int _g_n) {
+            this->g_n = _g_n;
+        }
+
+        int get_h_n() const {
+            return h_n;
+        }
+
+        void set_h_n(int _h_n) {
+            this->h_n = _h_n;
         }
 
         int get_cost() const {
@@ -77,7 +103,11 @@ class Node {
 
         Operator op; //the operator applied to the parent to reach/generate this node
         
-        int cost; //the cost to reach this node (g(n), the path from initial state to this node, as indicated by the parent pointers)
+        int cost; //g(n) + h(n)
+
+        int g_n; //the cost to reach this node (g(n), the path from initial state to this node, as indicated by the parent pointers)
+        
+        int h_n; //heuristic for cost from current node to goal node
 
 };
 
@@ -103,8 +133,8 @@ class Problem { //defining the problem space
             return {Operator::MOVE_LEFT, Operator::MOVE_RIGHT, Operator::MOVE_UP, Operator::MOVE_DOWN};
         }
 
-        Node* apply_operator(const Problem& problem, Node* node, Operator op) const {
-            Node* childNode = new Node(problem.get_initial_state(), 0, nullptr, Operator::NONE);
+        Node* apply_operator(const Problem& problem, Node* node, Operator op, SearchType searchType) const {
+            Node* childNode = new Node(problem.get_initial_state(), 0, 0, nullptr, Operator::NONE);
             //find indices of the blank tile
             int row, col;
             vector<vector<int>> nodeState = node->get_state();
@@ -145,8 +175,24 @@ class Problem { //defining the problem space
                     break;
 
             }
+
+            childNode->set_g_n(node->get_g_n() + 1); //update g_n value (same for all search types)
+            
+            switch (searchType) { //update heuristic h(n) of childNode based on the Search type.
+                case SearchType::Uniform:
+                    childNode->set_h_n(0); //update h_n value, 0 for UCS
+                    break;
+                case SearchType::Misplaced:
+                    childNode->set_h_n(problem.computeMisplacedHeuristic(childState, problem.get_goal_state()));
+                    break;
+                case SearchType::Euclidean:
+                    childNode->set_h_n(problem.computeEuclideanHeuristic(childState, problem.get_goal_state()));
+                    break;
+                default:
+                    break;
+            }
             childNode->set_state(childState);
-            childNode->set_cost(node->get_cost() + 1);
+            childNode->set_cost(childNode->get_g_n() + childNode->get_h_n()); //update cost f(n) = g(n) + h(n)
             childNode->set_parent(node);
             childNode->set_operator(op);
             return childNode;
@@ -156,6 +202,47 @@ class Problem { //defining the problem space
         int compute_operator_cost(const vector<vector<int>>& state, Operator op) const {
             return 1;
         }
+
+        //compute the Misplaced Tile heuristic
+        int computeMisplacedHeuristic(const vector<vector<int>>& currState, const vector<vector<int>>& goalState) const {
+            int h;
+            for (int i = 0; i < currState.size(); ++i) {
+                for (int j = 0; j < currState.size(); ++j) {
+                    if (currState[i][j] != goalState[i][j]) { //increment h for every tile not matching goal state
+                        ++h;
+                    }
+                }
+            }
+            return h;
+        }
+
+
+        //Compute the Euclidean Distance heuristic
+        int computeEuclideanHeuristic(const vector<vector<int>>& currState, const vector<vector<int>>& goalState) const {
+            int h = 0;
+            for (int i = 0; i < currState.size(); ++i) {
+                for (int j = 0; j < currState.size(); ++j) {
+                    if (currState[i][j] != 0) {
+                        //find the corresponding row and col of currState[i][j] in the goal state.
+                        int goalRow;
+                        int goalCol;
+                        for (int row = 0; row < goalState.size(); ++row) {
+                            for (int col = 0; col < goalState.size(); ++col) {
+                                if (goalState[row][col] == currState[i][j]) {
+                                    goalRow = row;
+                                    goalCol = col;
+                                    break;
+                                }
+                            }
+                        }
+                        h += sqrt(pow(i - goalRow, 2) + pow(j - goalCol, 2));
+                    }
+                }
+            }
+            return h;
+        }
+
+
 
         string stateToString(const vector<vector<int>>& state) const {
             string stateString = "";
@@ -174,7 +261,7 @@ class Problem { //defining the problem space
                 frontier.pop();
                 vector<vector<int>> currState = currNode->get_state();
                 if (currState == childState) {
-                    if (childNode->get_cost() > currNode->get_cost()) {
+                    if (currNode->get_cost() > childNode->get_cost()) { //if matching currNode in frontier has higher PATH-COST then we want to replace it with childNode
                         return {true, true};
                     }
                     return {true, false};
@@ -190,6 +277,7 @@ class Problem { //defining the problem space
                 frontier.pop();
                 vector<vector<int>> currState = currNode->get_state();
                 if (currNode->get_state() == childNode->get_state()) {
+                    newFrontier.push({childNode->get_cost(), childNode}); //want to add our matching state childNode (with better PATH-COST) instead.
                     continue;
                 }
                 newFrontier.push({currNode->get_cost(), currNode});
@@ -216,7 +304,7 @@ class Problem { //defining the problem space
 
 
 vector<Operator> UniformCostSearch(const Problem& problem) {
-    Node* initial_node = new Node(problem.get_initial_state(), 0, nullptr, Operator::NONE);
+    Node* initial_node = new Node(problem.get_initial_state(), 0, 0, nullptr, Operator::NONE);
     priority_queue<pair<int, Node*>, vector<pair<int, Node*>>, greater<pair<int, Node*>>> frontier; //int, Node* pair (sorted by lowest path cost g(n))
     //unordered_set<vector<vector<int>>> explored; //efficient checking for repeated states
     unordered_set<string> explored;
@@ -244,7 +332,7 @@ vector<Operator> UniformCostSearch(const Problem& problem) {
             if (op == Operator::NONE) {
                 continue;
             }
-            Node* child = problem.apply_operator(problem, currNode, op);
+            Node* child = problem.apply_operator(problem, currNode, op, SearchType::Uniform);
             vector<vector<int>> childState = child->get_state();
             string childStateString = problem.stateToString(childState); 
             pair<bool, bool> checkChild = problem.isInFrontier(frontier, child);
@@ -261,4 +349,92 @@ vector<Operator> UniformCostSearch(const Problem& problem) {
     }
 
     return {}; //frontier empty, search failed
+}
+
+vector<Operator> A_Star_MisplacedTile(const Problem& problem) {
+    Node* initial_node = new Node(problem.get_initial_state(), 0, 0, nullptr, Operator::NONE);
+    priority_queue<pair<int, Node*>, vector<pair<int, Node*>>, greater<pair<int, Node*>>> frontier;
+    unordered_set<string> explored;
+    frontier.push({problem.computeMisplacedHeuristic(problem.get_initial_state(), problem.get_goal_state()), initial_node});
+
+    //perform the search
+    while (!frontier.empty()) {
+        Node* currNode = frontier.top().second;
+        frontier.pop();
+
+        //check if the state is the goal state
+        vector<vector<int>> currState = currNode->get_state();
+        if (currState == problem.get_goal_state()) {
+            vector<Operator> path = currNode->get_path();
+            delete currNode;
+            return path;
+        }
+
+        string stateString = problem.stateToString(currState);
+        explored.insert(stateString);
+        for (Operator op : problem.get_operators()) {
+            if (op == Operator::NONE) {
+                continue;
+            }
+            Node* child = problem.apply_operator(problem, currNode, op, SearchType::Misplaced);
+            vector<vector<int>> childState = child->get_state();
+            string childStateString = problem.stateToString(childState); 
+            pair<bool, bool> checkChild = problem.isInFrontier(frontier, child);
+            bool inFrontier = checkChild.first;
+            bool higherPathCost = checkChild.second;
+
+            if (explored.find(childStateString) == explored.end() || !inFrontier) { //childState is not in explored set or frontier.
+                frontier.push({child->get_cost(), child});
+            }
+            else if (inFrontier && higherPathCost) {
+                frontier = problem.replaceFrontierNode(frontier, child);
+            }            
+        }
+    }
+
+    return {}; //search failed
+}
+
+vector<Operator> A_Star_EuclideanDistance(const Problem& problem) {
+    Node* initial_node = new Node(problem.get_initial_state(), 0, 0, nullptr, Operator::NONE);
+    priority_queue<pair<int, Node*>, vector<pair<int, Node*>>, greater<pair<int, Node*>>> frontier;
+    unordered_set<string> explored;
+    frontier.push({problem.computeEuclideanHeuristic(problem.get_initial_state(), problem.get_goal_state()), initial_node});
+
+    //perform the search
+    while (!frontier.empty()) {
+        Node* currNode = frontier.top().second;
+        frontier.pop();
+
+        //check if the state is the goal state
+        vector<vector<int>> currState = currNode->get_state();
+        if (currState == problem.get_goal_state()) {
+            vector<Operator> path = currNode->get_path();
+            delete currNode;
+            return path;
+        }
+
+        string stateString = problem.stateToString(currState);
+        explored.insert(stateString);
+        for (Operator op : problem.get_operators()) {
+            if (op == Operator::NONE) {
+                continue;
+            }
+            Node* child = problem.apply_operator(problem, currNode, op, SearchType::Euclidean);
+            vector<vector<int>> childState = child->get_state();
+            string childStateString = problem.stateToString(childState); 
+            pair<bool, bool> checkChild = problem.isInFrontier(frontier, child);
+            bool inFrontier = checkChild.first;
+            bool higherPathCost = checkChild.second;
+
+            if (explored.find(childStateString) == explored.end() || !inFrontier) { //childState is not in explored set or frontier.
+                frontier.push({child->get_cost(), child});
+            }
+            else if (inFrontier && higherPathCost) {
+                frontier = problem.replaceFrontierNode(frontier, child);
+            }            
+        }
+    }
+
+    return {}; //search failed
 }
