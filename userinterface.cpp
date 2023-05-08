@@ -56,7 +56,7 @@ void algorithmChoice(int x){
     cout << "Choice: ";
     cin >> x;
     if(x == 0){
-        cout << "Thank you for choosing: A* with the Misplaced Tile Heuristic" << endl;
+        cout << "Thank you for choosing: Uniform Cost Search" << endl;
         cout << "The Goal State: " << endl;
         for (int i = 0; i < goal_state.size(); ++i) {
         for (int j = 0; j < goal_state[i].size(); ++j) {
@@ -153,7 +153,7 @@ void algorithmChoice(int x){
         cout << "Took " << time << " ms" << endl;
     }
     else if (x == 2){
-        cout << "Thank you for choosing: A* with the Misplaced Tile Heuristic" << endl;
+        cout << "Thank you for choosing: A* with the Euclidean Distance Heuristic" << endl;
         cout << "The Goal State: " << endl;
         for (int i = 0; i < goal_state.size(); ++i) {
         for (int j = 0; j < goal_state[i].size(); ++j) {
