@@ -1,0 +1,59 @@
+C:\Users\[Cal's DesktopUser]\Documents\School\CS170\Project1>test.exe
+Welcome to the CS170 - AI Project 1. This project is attempting to solve several puzzles using different algorithm types. Please wait as we list out the possible options to choose:
+First please choose from the following:
+        0 - Use Default Puzzle
+        1 - Enter Your Own Puzzle
+Choice: 1
+Enter your own puzzle:
+Enter first row
+1 0 3
+Enter second row
+4 2 6
+Enter third row
+7 5 8
+Thank you for Creating Your Own Puzzle
+Now choose the algorithm:
+        0 - Uniform Cost Search
+        1 - A* with the Misplaced Tile Heuristic
+        2 - A* with the Euclidean Distance Heuristic
+Choice: 2
+Thank you for choosing: A* with the Euclidean Distance Heuristic
+The Goal State:
+1 2 3
+4 5 6
+7 8 0
+
+Initial State:
+1 0 3
+4 2 6
+7 5 8
+
+The best state to expand with g(n) = 1 and h(n) = 2 is...
+1 2 3
+4 0 6
+7 5 8
+
+Expanding this node...
+
+The best state to expand with g(n) = 2 and h(n) = 1 is...
+1 2 3
+4 5 6
+7 0 8
+
+Expanding this node...
+
+The best state to expand with g(n) = 3 and h(n) = 0 is...
+1 2 3
+4 5 6
+7 8 0
+
+Expanding this node...
+
+
+Goal!!!
+
+To solve this problem the search algorithm expanded a total of 3 nodes.
+The maximum number of nodes in the queue at any one time: 9
+The depth of the goal node was 3
+The Solution Is:
+MOVE_DOWN  MOVE_DOWN  MOVE_RIGHT  Took 16 ms
