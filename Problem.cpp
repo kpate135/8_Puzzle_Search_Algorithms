@@ -219,22 +219,20 @@ class Problem { //defining the problem space
 
         //Compute the Euclidean Distance heuristic
         int computeEuclideanHeuristic(const vector<vector<int>>& currState, const vector<vector<int>>& goalState) const {
+            //load goal state into hashtable for O(1) lookup of row, col for values
+            unordered_map<int, pair<int, int>> goalValueLocations; //value mapped to it's i and j index
+            for (int i = 0; i < goalState.size(); ++i) {
+                for (int j = 0; j < goalState.size(); ++j) {
+                    goalValueLocations[goalState[i][j]] = {i, j};
+                }
+            }
             int h = 0;
             for (int i = 0; i < currState.size(); ++i) {
                 for (int j = 0; j < currState.size(); ++j) {
                     if (currState[i][j] != 0) {
                         //find the corresponding row and col of currState[i][j] in the goal state.
-                        int goalRow;
-                        int goalCol;
-                        for (int row = 0; row < goalState.size(); ++row) {
-                            for (int col = 0; col < goalState.size(); ++col) {
-                                if (goalState[row][col] == currState[i][j]) {
-                                    goalRow = row;
-                                    goalCol = col;
-                                    break;
-                                }
-                            }
-                        }
+                        int goalRow = goalValueLocations[currState[i][j]].first;
+                        int goalCol = goalValueLocations[currState[i][j]].second;
                         h += sqrt(pow(i - goalRow, 2) + pow(j - goalCol, 2));
                     }
                 }
@@ -284,34 +282,14 @@ class Problem { //defining the problem space
             }
             return newFrontier;
         }
-
-        /*
-        bool checkExplored(const vector<vector<int>>& state) const {
-            
-        }
-        
-        void expand(const vector<vector<int>>& currState) {
-            vector<Operator> operators = this->get_operators();
-            for (Operator op : operators) {
-                vector<vector<int>> new_state = this->apply_operator(currState, op);
-                int new_cost = curr_node->get_cost() + this->compute_operator_cost(currState, op);
-                Node* new_node = new Node(new_state, new_cost, curr_node, op);
-                frontier.push({new_cost, new_node});
-            }
-        }
-        */
 };
 
 
 vector<Operator> UniformCostSearch(const Problem& problem) {
     Node* initial_node = new Node(problem.get_initial_state(), 0, 0, nullptr, Operator::NONE);
     priority_queue<pair<int, Node*>, vector<pair<int, Node*>>, greater<pair<int, Node*>>> frontier; //int, Node* pair (sorted by lowest path cost g(n))
-    //unordered_set<vector<vector<int>>> explored; //efficient checking for repeated states
     unordered_set<string> explored;
-    //unordered_set<Node*> inFrontier; //unordered_set<pair<vector<vector<int>>, int>> //if the set bases what's unique based on the 2d array states
-    //unordered_map<string, int> inFrontier;
     frontier.push({0, initial_node});
-    //inFrontier[initial_node->get_state()] = initial_node->get_cost();
 
     //perform the search
     while (!frontier.empty()) {

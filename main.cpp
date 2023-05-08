@@ -17,6 +17,7 @@ int main()
     //vector<vector<int>> initial_state = {{1, 2, 0}, {4, 5, 3}, {7, 8, 6}}; //Easy
     vector<vector<int>> initial_state = {{0, 1, 2}, {4, 5, 3}, {7, 8, 6}}; //doable
     //vector<vector<int>> initial_state = {{8, 7, 1}, {6, 0, 2}, {5, 4, 3}}; //Oh Boy
+    //vector<vector<int>> initial_state = {{1, 2, 3}, {4, 8, 0}, {7, 6, 5}};
 
     cout << "Initial State: " << endl;
     for (int i = 0; i < initial_state.size(); ++i) {
