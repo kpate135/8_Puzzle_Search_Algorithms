@@ -96,6 +96,35 @@ class Node {
             return path;
         }
 
+        void printPuzzle(Node* node, int numExpanded, int maxNumNodes) const {
+            vector<Node*> nodePath;
+            Node* curr = node;
+            while (curr->get_parent() != nullptr) {
+                nodePath.push_back(curr);
+                curr = curr->get_parent();
+            }
+            reverse(nodePath.begin(), nodePath.end());
+            for (int i = 0; i < nodePath.size(); ++i) {
+                cout << "The best state to expand with g(n) = " << nodePath[i]->get_g_n();
+                cout << " and h(n) = " << nodePath[i]->get_h_n() << " is..." << endl;
+
+                vector<vector<int>> state = nodePath[i]->get_state();
+                for (int i = 0; i < state.size(); ++i) {
+                    for (int j = 0; j < state[i].size(); ++j) {
+                        cout << state[i][j] << " ";
+                    }
+                    cout << endl;
+                }
+                cout << endl;
+                cout << "Expanding this node..." << endl;
+                cout << endl;        
+            }
+            cout << endl << "Goal!!!" << endl << endl; 
+            cout << "To solve this problem the search algorithm expanded a total of " << numExpanded << " nodes." << endl;
+            cout << "The maximum number of nodes in the queue at any one time: " << maxNumNodes << endl;
+            cout << "The depth of the goal node was " << nodePath.size() << endl; 
+        }
+
     private:
         vector<vector<int>> state; //the state of the puzzle in the state space to which the node corresponds
                 
@@ -282,6 +311,7 @@ class Problem { //defining the problem space
             }
             return newFrontier;
         }
+
 };
 
 
@@ -292,18 +322,25 @@ vector<Operator> UniformCostSearch(const Problem& problem) {
     frontier.push({0, initial_node});
 
     //perform the search
+    int maxNumNodes = 0;
+    int numExpanded = 0;
     while (!frontier.empty()) {
+        if (frontier.size() > maxNumNodes) {
+            maxNumNodes = frontier.size();
+        }
         Node* currNode = frontier.top().second; //choose the lowest-cost node in frontier to explore
         frontier.pop();
 
         //check if the state is the goal state
         vector<vector<int>> currState = currNode->get_state();
         if (currState == problem.get_goal_state()) {
+            currNode->printPuzzle(currNode, numExpanded, maxNumNodes); //print g(n), h(n), and puzzle
             vector<Operator> path = currNode->get_path();
             delete currNode;
             return path;
         }
 
+        ++numExpanded;
         string stateString = problem.stateToString(currState);
         explored.insert(stateString);
         for (Operator op : problem.get_operators()) {
@@ -336,18 +373,25 @@ vector<Operator> A_Star_MisplacedTile(const Problem& problem) {
     frontier.push({problem.computeMisplacedHeuristic(problem.get_initial_state(), problem.get_goal_state()), initial_node});
 
     //perform the search
+    int maxNumNodes = 0;
+    int numExpanded = 0;
     while (!frontier.empty()) {
+        if (frontier.size() > maxNumNodes) {
+            maxNumNodes = frontier.size();
+        }
         Node* currNode = frontier.top().second;
         frontier.pop();
 
         //check if the state is the goal state
         vector<vector<int>> currState = currNode->get_state();
         if (currState == problem.get_goal_state()) {
+            currNode->printPuzzle(currNode, numExpanded, maxNumNodes); //print g(n), h(n), and puzzle
             vector<Operator> path = currNode->get_path();
             delete currNode;
             return path;
         }
 
+        ++numExpanded;
         string stateString = problem.stateToString(currState);
         explored.insert(stateString);
         for (Operator op : problem.get_operators()) {
@@ -380,18 +424,25 @@ vector<Operator> A_Star_EuclideanDistance(const Problem& problem) {
     frontier.push({problem.computeEuclideanHeuristic(problem.get_initial_state(), problem.get_goal_state()), initial_node});
 
     //perform the search
+    int maxNumNodes = 0;
+    int numExpanded = 0;
     while (!frontier.empty()) {
+        if (frontier.size() > maxNumNodes) {
+            maxNumNodes = frontier.size();
+        }
         Node* currNode = frontier.top().second;
         frontier.pop();
 
         //check if the state is the goal state
         vector<vector<int>> currState = currNode->get_state();
         if (currState == problem.get_goal_state()) {
+            currNode->printPuzzle(currNode, numExpanded, maxNumNodes); //print g(n), h(n), and puzzle
             vector<Operator> path = currNode->get_path();
             delete currNode;
             return path;
         }
 
+        ++numExpanded;
         string stateString = problem.stateToString(currState);
         explored.insert(stateString);
         for (Operator op : problem.get_operators()) {
