@@ -1,3 +1,8 @@
+# Solving the 8 Puzzle problem using:
+## &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Blind Search (Uniform Cost Search)
+## &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Heuristic Search (A* Search with Misplaced Tile and Euclidean Distance Heuristics).
+
+
 # CS170-Project-1
 Welcome to Team 3's Project 1 for CS170.
 Contributed by Christian Lo (clo060), Ethan liu (eliu058), Calvin Trujillo (ctruj011) , and Krishaan Patel (kpate135).
